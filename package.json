@@ -1,15 +1,20 @@
 {
     "name": "json-to-yaml-ref",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
         "json-to-yaml-ref": "dist/cli.js"
     },
+    "files": [
+        "dist"
+    ],
     "scripts": {
-        "build": "tsc",
+        "clean": "rm -rf dist",
+        "build": "npm run clean && tsc",
         "demo": "tsx demo/run.ts",
         "cli": "tsx src/cli.ts",
+        "prepublishOnly": "npm run build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
