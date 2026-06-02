@@ -1,19 +1,27 @@
 {
-	"name": "json-to-yaml-ref",
-	"version": "1.0.0",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"description": "",
-	"devDependencies": {
-		"typescript": "^5.7.2"
-	},
-	"dependencies": {
-		"yaml": "^2.6.1"
-	}
+    "name": "json-to-yaml-ref",
+    "version": "1.0.2",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "bin": {
+        "json-to-yaml-ref": "dist/cli.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "demo": "tsx demo/run.ts",
+        "cli": "tsx src/cli.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@types/node": "^25.9.1",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.2"
+    },
+    "dependencies": {
+        "yaml": "^2.6.1"
+    }
 }

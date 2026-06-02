@@ -1,0 +1,695 @@
+openapi: 3.1.0
+info:
+  title: ONDC Generated API
+  version: 1.0.0
+paths:
+  /confirm:
+    post:
+      operationId: confirm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: &context
+                  type: object
+                  properties:
+                    domain: &domain
+                      type: string
+                    action: *domain
+                    timestamp: *domain
+                    transaction_id: *domain
+                    message_id: *domain
+                    bap_id: *domain
+                    bap_uri: *domain
+                    ttl: *domain
+                    bpp_id: *domain
+                    bpp_uri: *domain
+                    version: *domain
+                    location: &location
+                      type: object
+                      properties:
+                        country: &country
+                          type: object
+                          properties:
+                            code: *domain
+                        city: *country
+                message:
+                  type: object
+                  properties:
+                    order:
+                      type: object
+                      properties:
+                        provider: &provider
+                          type: object
+                          properties:
+                            id: *domain
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              xinput: &xinput
+                                type: object
+                                properties:
+                                  form: *provider
+                                  form_response: &form_response
+                                    type: object
+                                    properties:
+                                      status: *domain
+                                      submission_id: *domain
+                        payments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type: *domain
+                              id: *domain
+                              status: *domain
+                              collected_by: *domain
+                              time:
+                                type: object
+                                properties:
+                                  label: *domain
+                                  timestamp: *domain
+                              params: &params
+                                type: object
+                                properties:
+                                  bank_code: *domain
+                                  bank_account_number: *domain
+                                  transaction_id: *domain
+                                  amount: *domain
+                                  currency: *domain
+      responses: &responses
+        "200":
+          description: Synchronous ACK/NACK response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  context:
+                    type: object
+                  message:
+                    type: object
+                    properties:
+                      ack:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            enum:
+                              - ACK
+                              - NACK
+                  error:
+                    type: object
+                    properties:
+                      code: *domain
+                      paths: *domain
+                      message: *domain
+  /on_confirm:
+    post:
+      operationId: on_confirm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    order:
+                      type: object
+                      properties:
+                        id: *domain
+                        provider: &provider_2
+                          type: object
+                          properties:
+                            id: *domain
+                            descriptor: &descriptor_2
+                              type: object
+                              properties:
+                                images:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      url: *domain
+                                      size_type: *domain
+                                name: *domain
+                                short_desc: *domain
+                                long_desc: *domain
+                            tags: &tags_2
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  descriptor: &descriptor
+                                    type: object
+                                    properties:
+                                      code: *domain
+                                      name: *domain
+                                  list: &list
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        descriptor: *descriptor
+                                        value: *domain
+                        items: &items
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              descriptor: *descriptor
+                              category_ids: &category_ids
+                                type: array
+                                items: *domain
+                              fulfillment_ids: *category_ids
+                              price: &price
+                                type: object
+                                properties:
+                                  currency: *domain
+                                  value: *domain
+                              tags: &tags
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    descriptor: *descriptor
+                                    list:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          descriptor:
+                                            type: object
+                                            properties:
+                                              code: *domain
+                                              name: *domain
+                                              short_desc: *domain
+                                          value: *domain
+                                    display: &display
+                                      type: boolean
+                        quote: &quote
+                          type: object
+                          properties:
+                            price: *price
+                            breakup:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  title: *domain
+                                  price: *price
+                            ttl: *domain
+                            id: *domain
+                        fulfillments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              customer: &customer
+                                type: object
+                                properties:
+                                  person: &person
+                                    type: object
+                                    properties:
+                                      name: *domain
+                                  contact: &contact
+                                    type: object
+                                    properties:
+                                      phone: *domain
+                                      email: *domain
+                              state:
+                                type: object
+                                properties:
+                                  descriptor: *descriptor
+                              id: *domain
+                              type: *domain
+                              tags: *tags
+                        payments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              type: *domain
+                              status: *domain
+                              collected_by: *domain
+                              tags: &tags_3
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    descriptor: *country
+                                    display: *display
+                                    list:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          descriptor: *country
+                                          value: *domain
+                              params: *params
+                              time: &time
+                                type: object
+                                properties:
+                                  label: *domain
+                                  range:
+                                    type: object
+                                    properties:
+                                      start: *domain
+                                      end: *domain
+                                  timestamp: *domain
+                        cancellation_terms: &cancellation_terms
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              fulfillment_state: &fulfillment_state
+                                type: object
+                                properties:
+                                  descriptor: *country
+                              cancellation_fee:
+                                type: object
+                                properties:
+                                  percentage: *domain
+                              external_ref:
+                                type: object
+                                properties:
+                                  mimetype: *domain
+                                  url: *domain
+                        documents: &documents
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              descriptor:
+                                type: object
+                                properties:
+                                  code: *domain
+                                  name: *domain
+                                  short_desc: *domain
+                                  long_desc: *domain
+                              mime_type: *domain
+                              url: *domain
+                        created_at: *domain
+                        updated_at: *domain
+                        status: *domain
+      responses: *responses
+  /on_search:
+    post:
+      operationId: on_search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    catalog:
+                      type: object
+                      properties:
+                        descriptor: *person
+                        providers:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              descriptor: *descriptor_2
+                              categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id: *domain
+                                    descriptor: *descriptor
+                                    parent_category_id: *domain
+                              items:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id: *domain
+                                    descriptor: *descriptor
+                                    category_ids: *category_ids
+                                    fulfillment_ids: *category_ids
+                                    tags: *tags
+                                    xinput:
+                                      type: object
+                                      properties:
+                                        head: &head
+                                          type: object
+                                          properties:
+                                            descriptor: *person
+                                            index:
+                                              type: object
+                                              properties:
+                                                min: &min
+                                                  type: integer
+                                                cur: *min
+                                                max: *min
+                                            headings: *category_ids
+                                        form: &form
+                                          type: object
+                                          properties:
+                                            id: *domain
+                                            mime_type: *domain
+                                            url: *domain
+                                            resubmit: *display
+                                            multiple_sumbissions: *display
+                                        required: *display
+                              fulfillments:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id: *domain
+                                    type: *domain
+                                    tags: *tags
+                              payments:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    type: *domain
+                                    id: *domain
+                                    status: *domain
+                                    collected_by: *domain
+                                    time: &time_2
+                                      type: object
+                                      properties:
+                                        label: *domain
+                              tags: *tags_2
+      responses: *responses
+  /on_select:
+    post:
+      operationId: on_select
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    order:
+                      type: object
+                      properties:
+                        provider: *provider_2
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              descriptor: *descriptor
+                              category_ids: *category_ids
+                              fulfillment_ids: *category_ids
+                              price: *price
+                              tags: *tags
+                              xinput:
+                                type: object
+                                properties:
+                                  form: *form
+                                  form_response: *form_response
+                                  head: *head
+                                  required: *display
+                        fulfillments: &fulfillments
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              type: *domain
+                              customer:
+                                type: object
+                                properties:
+                                  person:
+                                    type: object
+                                    properties:
+                                      dob: *domain
+                                      creds: &creds
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            id: *domain
+                                            type: *domain
+                                      name: *domain
+                                  contact: *contact
+                              state: *fulfillment_state
+                              tags: *tags
+                        quote: *quote
+      responses: *responses
+  /on_status:
+    post:
+      operationId: on_status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    order:
+                      type: object
+                      properties:
+                        provider: *provider_2
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              descriptor: *descriptor
+                              category_ids: *category_ids
+                              fulfillment_ids: *category_ids
+                              matched: *display
+                              recommended: *display
+                              price: *price
+                              tags: *tags
+                              xinput: *xinput
+                        fulfillments: *fulfillments
+                        quote: *quote
+                        id: *domain
+                        status: *domain
+                        payments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type: *domain
+                              id: *domain
+                              status: *domain
+                              collected_by: *domain
+                              time: *time
+                              params: *params
+                        cancellation_terms: *cancellation_terms
+                        documents: *documents
+                        created_at: *domain
+                        updated_at: *domain
+      responses: *responses
+  /on_update:
+    post:
+      operationId: on_update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    order:
+                      type: object
+                      properties:
+                        id: *domain
+                        status: *domain
+                        provider: *provider_2
+                        items: *items
+                        quote: *quote
+                        fulfillments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              type: *domain
+                              customer: *customer
+                              state: *fulfillment_state
+                              tags:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    descriptor: *descriptor
+                                    display: *display
+                                    list: *list
+                        payments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              url: *domain
+                              params: *params
+                              status: *domain
+                              time: *time
+                              type: *domain
+                              collected_by: *domain
+                        cancellation_terms: *cancellation_terms
+                        documents: *documents
+                        created_at: *domain
+                        updated_at: *domain
+      responses: *responses
+  /search:
+    post:
+      operationId: search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context:
+                  type: object
+                  properties:
+                    domain: *domain
+                    action: *domain
+                    timestamp: *domain
+                    transaction_id: *domain
+                    message_id: *domain
+                    bap_id: *domain
+                    bap_uri: *domain
+                    ttl: *domain
+                    version: *domain
+                    location: *location
+                message:
+                  type: object
+                  properties:
+                    intent:
+                      type: object
+                      properties:
+                        category: *fulfillment_state
+                        payment:
+                          type: object
+                          properties:
+                            collected_by: *domain
+                            tags: *tags_3
+      responses: *responses
+  /select:
+    post:
+      operationId: select
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    order:
+                      type: object
+                      properties:
+                        provider: *provider
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              xinput: *xinput
+                              category_ids: *category_ids
+                              fulfillment_ids: *category_ids
+                        fulfillments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: *domain
+                              type: *domain
+                              customer:
+                                type: object
+                                properties:
+                                  person:
+                                    type: object
+                                    properties:
+                                      dob: *domain
+                                      creds: *creds
+                                  contact: *contact
+      responses: *responses
+  /status:
+    post:
+      operationId: status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    ref_id: *domain
+      responses: *responses
+  /update:
+    post:
+      operationId: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context: *context
+                message:
+                  type: object
+                  properties:
+                    update_target: *domain
+                    order:
+                      type: object
+                      properties:
+                        id: *domain
+                        payments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              time: *time_2
+                              params:
+                                type: object
+                                properties:
+                                  amount: *domain
+                                  currency: *domain
+      responses: *responses

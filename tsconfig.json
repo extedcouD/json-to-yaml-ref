@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"declaration": true, // Generate `.d.ts` type declaration files
 		"outDir": "./dist", // Output directory for compiled files
+		"rootDir": "./src", // Treat ./src as the source root so dist mirrors it
 		"module": "commonjs", // Module system
 		"target": "es6", // Target ECMAScript version
 		"strict": true, // Enable strict type checking
