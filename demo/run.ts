@@ -23,8 +23,18 @@ function canonical(obj: any): any {
     return obj;
 }
 
-// maxAliasCount: -1 disables the billion-laughs guard (we alias aggressively).
-const roundTripped = parse(yaml, { maxAliasCount: -1 });
+// The output must parse with stock settings — the alias budget guarantees we
+// never trip the parser's billion-laughs guard (default maxAliasCount: 100).
+let safe = true;
+let roundTripped: any;
+try {
+    roundTripped = parse(yaml);
+} catch (e) {
+    safe = false;
+    console.error(`default parse THREW: ${(e as Error).message}`);
+    roundTripped = parse(yaml, { maxAliasCount: -1 });
+}
+
 const ok =
     JSON.stringify(canonical(roundTripped)) === JSON.stringify(canonical(json));
 
@@ -37,6 +47,7 @@ console.log(
         `(${Math.round((1 - yaml.length / raw.length) * 100)}% smaller)`
 );
 console.log(`anchors ${anchors}, aliases ${aliases}`);
+console.log(`default-parse ${safe ? "OK" : "THREW"}`);
 console.log(`round-trip ${ok ? "OK" : "MISMATCH"}`);
 
-if (!ok) process.exit(1);
+if (!ok || !safe) process.exit(1);

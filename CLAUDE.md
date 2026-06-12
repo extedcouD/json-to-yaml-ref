@@ -25,13 +25,14 @@ The core is `src/index.ts`. Flow:
 - `matchMode`: `"canonical"` (default — sorts object keys before serializing, so key-order differences still match; aliased copies adopt the first occurrence's key order, lossless for mappings) or `"exact"` (byte-faithful, fewer matches).
 - `minSize`: min node count (subtree incl. self) for a structure to be eligible. Default 1 = ref everything.
 - `includeScalars`: also dedup repeated scalar values. Default false (structures only).
+- `maxAliasCount`: safety budget (default 100, matching the `yaml` parser). After the walk, `enforceAliasBudget` drops the heaviest refs until the document's worst anchor score (`count * aliasCount`, the parser's billion-laughs metric — nested aliases compound multiplicatively) is `<=` this, so output **always parses with stock `yaml.parse()`**. Negative = disable the guard (old unbounded behavior; output may then need `parse(yaml, { maxAliasCount: -1 })`).
 
 Key implementation constraints to preserve when editing:
 - Anchor names are independent of the path's validity: `anchorBase` picks the nearest non-numeric path key, `sanitize` strips invalid chars, `uniqueName` adds a `_2`/`_3` collision suffix. (The old path-`join("_")` scheme silently disabled all dedup under keys containing `/`, `.`, spaces, etc.)
 - Only `YAMLMap`/`YAMLSeq` get anchors unless `includeScalars` is set. `doc.getIn(path, true)` (keepScalar) is required so scalar nodes come back as `Scalar` instances.
 - Recursion stops at a duplicate. Equal ancestor/descendant pairs are impossible for finite data, so aliases never create cycles.
 - Non-JSON-serializable values (cycles, etc.) are skipped via the `serialize` try/catch returning `null`.
-- Aggressive aliasing can exceed `yaml`'s default `maxAliasCount` (100) on *parse* — `demo/run.ts` passes `maxAliasCount: -1` when verifying.
+- Aggressive aliasing would otherwise exceed `yaml`'s default `maxAliasCount` (100) on *parse*; `enforceAliasBudget` (post-walk) now prevents this by demoting refs, so `demo/run.ts` verifies with a stock `parse()` and asserts it does not throw. Only the `maxAliasCount: -1` (guard disabled) path still needs `parse(.., { maxAliasCount: -1 })`.
 
 ## Gotcha
 

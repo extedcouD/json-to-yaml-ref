@@ -65,6 +65,7 @@ All optional. Defaults are tuned for maximum deduplication.
 | `matchMode`      | `"canonical"` \| `"exact"`  | `"canonical"` | `canonical` ignores object key order when matching (aliased copies adopt the first occurrence's order — lossless). `exact` is byte-faithful and matches less. |
 | `minSize`        | `number`                    | `1`           | Minimum node count (collections + scalars in the subtree, self included) for a structure to be eligible. Raise it to skip tiny shapes.   |
 | `includeScalars` | `boolean`                   | `false`       | Also dedup repeated scalar values. Off by default (scalar aliasing is usually noise).                                                    |
+| `maxAliasCount`  | `number`                    | `100`         | Safety budget: the output is guaranteed to parse with `yaml.parse()` (never trips the billion-laughs guard). The lib drops the heaviest refs until every anchor's `count * aliasCount` score stays at or below this. Set `-1` to disable and alias unboundedly. |
 
 Returns the YAML `string`.
 
@@ -169,9 +170,10 @@ admin:
 1. The input is wrapped in a [`yaml`](https://eemeli.org/yaml/) `Document` (full AST up front).
 2. A top-down walk records the first occurrence of each structure (keyed by its serialization).
 3. On a repeat, the first occurrence is anchored lazily and the duplicate is replaced with an alias — duplicates are never recursed into, so anchors always point at the first occurrence.
-4. `doc.toString()` renders the anchors/aliases.
+4. A final budget pass drops the heaviest refs until the document's worst alias score (`count * aliasCount`, the parser's billion-laughs metric — nested aliases compound multiplicatively) is within `maxAliasCount`. So the output **always parses with stock `yaml.parse()`**, no matter how repetitive the input.
+5. `doc.toString()` renders the anchors/aliases.
 
-Non-serializable values (cycles, etc.) are left inline. Aggressively-aliased output can exceed the `yaml` parser's default `maxAliasCount` (100) — pass `{ maxAliasCount: -1 }` to `parse` when reading it back.
+Non-serializable values (cycles, etc.) are left inline. To alias unboundedly (and read back with `parse(yaml, { maxAliasCount: -1 })`), pass `{ maxAliasCount: -1 }` to `convertToYamlWithRefs`.
 
 ## Development
 

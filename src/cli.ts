@@ -14,6 +14,11 @@ Options:
   --match <mode>    Equality mode: canonical (default) or exact.
   --min-size <n>    Min node count for a structure to be ref'd (default 1).
   --include-scalars Also dedup repeated scalar values (default off).
+  --max-alias-count <n>
+                    Cap the alias score so the output always parses safely
+                    (default 100, matching yaml's maxAliasCount). The lib
+                    drops the heaviest refs to stay under it. Pass -1 to
+                    disable the guard (alias unboundedly).
   -h, --help        Show this help.
 
 Examples:
@@ -44,6 +49,8 @@ function main(): void {
 			options.matchMode = m;
 		} else if (a === "--min-size") {
 			options.minSize = Number(args[++i]);
+		} else if (a === "--max-alias-count") {
+			options.maxAliasCount = Number(args[++i]);
 		} else if (a === "--include-scalars") {
 			options.includeScalars = true;
 		} else if (!a.startsWith("-")) {
